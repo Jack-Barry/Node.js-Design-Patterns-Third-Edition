@@ -14,6 +14,7 @@ class FindRegex extends EventEmitter {
   }
 
   find () {
+    process.nextTick(() => { this.emit('findstart', ...this.files) })
     for (const file of this.files) {
       readFile(file, 'utf8', (err, content) => {
         if (err) {
@@ -37,5 +38,6 @@ findRegexInstance
   .addFile('fileA.txt')
   .addFile('fileB.json')
   .find()
+  .on('findstart', (...files) => console.log(`Started finding in ${files.join(', ')}`))
   .on('found', (file, match) => console.log(`Matched "${match}" in file ${file}`))
   .on('error', err => console.error(`Error emitted ${err.message}`))
