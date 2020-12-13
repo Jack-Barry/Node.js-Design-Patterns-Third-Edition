@@ -1,13 +1,13 @@
 import { appendFile, readFile, writeFile } from 'fs'
 import { basename, dirname, resolve } from 'path'
 import { fileURLToPath } from 'url'
+import { finished, fsOptions, sequentiallyExecute } from './helpers.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const outputPath = resolve(__dirname, '4_1_output.txt')
 const inputPathA = resolve(__dirname, '4_1_input_a.txt')
 const inputPathB = resolve(__dirname, '4_1_input_b.txt')
-const fsOptions = { encoding: 'utf-8' }
 
 /** Appends data to the destination file */
 function writeContentsToOutputFile (dest, data, cb) {
@@ -29,27 +29,6 @@ function processInputFile (dest, file, cb) {
   })
 }
 
-/**
- * Generic implementation of the sequential execution pattern
- *
- * Note that the `iteratorCallback` should accept as arguments:
- *   * The item of the array being processed
- *   * A second argument `iterate` which is called by the `iteratorCallback` to
- *       signal that the iteration is complete
- */
-function sequentiallyExecute (collection, iteratorCallback, finalCallback) {
-  function iterate (index) {
-    if (index === collection.length) return finalCallback()
-
-    iteratorCallback(collection[index], (err) => {
-      if (err) return finalCallback(err)
-      iterate(index + 1)
-    })
-  }
-
-  iterate(0)
-}
-
 /** Concatenates an array of files into the destination file */
 function concatFiles (err, dest, cb, ...files) {
   if (err) return cb(err)
@@ -59,7 +38,7 @@ function concatFiles (err, dest, cb, ...files) {
     processInputFile(dest, file, iterate)
   }
 
-  sequentiallyExecute(files, iteratorCallback, cb)
+  sequentiallyExecute(files, iteratorCallback, cb, 'Concatenation successful!')
 }
 
 /** Cleans the output file before executing the provided callback */
@@ -67,15 +46,6 @@ function cleanOutput (err, cb) {
   if (err) return cb(err)
   console.log('Cleaning the output file')
   writeFile(outputPath, '', cb)
-}
-
-/** Provides output to the console to verify a task has completed */
-function finished (err) {
-  if (err) {
-    console.error(err)
-    process.exit(1)
-  }
-  console.log('Concatenation successful!')
 }
 
 cleanOutput(null, (err) => {
