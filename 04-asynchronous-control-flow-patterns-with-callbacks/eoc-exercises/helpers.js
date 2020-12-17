@@ -6,8 +6,9 @@ export const fsOptions = { encoding: 'utf-8' }
  *
  * Note that the `iteratorCallback` should accept as arguments:
  *   * The item of the array being processed
- *   * A second argument `iterate` which is called by the `iteratorCallback` to
- *       signal that the iteration is complete
+ *   * A second argument `iterate` which is called by the `iteratorCallback`
+ *       with the index of the next item to process signal that the current
+ *       iteration is complete
  */
 export function sequentiallyExecute (
   collection,
