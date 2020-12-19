@@ -15,7 +15,7 @@ export class TaskQueue {
           return resolve(task())
         } catch (err) {
           // I'm not sure if this rejection needs to have a return or not?
-          reject(err)
+          return reject(err)
         }
       })
       process.nextTick(this.next.bind(this))
