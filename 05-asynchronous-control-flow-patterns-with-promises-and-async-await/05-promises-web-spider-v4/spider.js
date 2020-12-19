@@ -4,7 +4,7 @@ import superagent from 'superagent'
 import mkdirp from 'mkdirp'
 import { urlToFilename, getPageLinks } from './utils.js'
 import { promisify } from 'util'
-import { TaskQueue } from './TaskQueue.js'
+import { TaskQueue } from '../eoc-exercises/5_2_TaskQueue_async_await.js'
 
 const mkdirpPromises = promisify(mkdirp)
 
